@@ -184,5 +184,32 @@ class ProjectController extends Controller
 
         return response()->json(['message' => 'Project cancelled and refunded']);
     }
+
+    /**
+     * عرض المشاريع المكتملة للمستقل مع التقييمات.
+     */
+    public function completedProjects(Request $request)
+    {
+        $user = $request->user();
+
+        if ($user->role !== 'freelancer') {
+            return response()->json(['message' => 'Only freelancers can view their completed projects'], 403);
+        }
+
+        $projects = Project::with([
+                'category',
+                'client',
+                'acceptedOffer',
+                'reviews',
+            ])
+            ->whereHas('acceptedOffer', function ($query) use ($user) {
+                $query->where('freelancer_id', $user->id);
+            })
+            ->where('status', 'completed')
+            ->latest()
+            ->paginate(10);
+
+        return response()->json($projects);
+    }
 }
 

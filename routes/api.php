@@ -8,6 +8,9 @@ use App\Http\Controllers\Api\OfferController;
 use App\Http\Controllers\Api\ProjectController;
 use App\Http\Controllers\Api\WalletController;
 use App\Http\Controllers\Api\ReviewController;
+use App\Http\Controllers\Api\FreelancerProfileController;
+use App\Http\Controllers\Api\FreelancerPortfolioController;
+use App\Http\Controllers\Api\CategoryController;
 
 /*
 |--------------------------------------------------------------------------
@@ -24,6 +27,10 @@ use App\Http\Controllers\Api\ReviewController;
 Route::post('/register', [AuthController::class, 'register']);
 Route::post('/login', [AuthController::class, 'login']);
 
+// --- التصنيفات (متاحة للجميع) ---
+Route::get('/categories', [CategoryController::class, 'index']);
+Route::get('/categories/{category}', [CategoryController::class, 'show']);
+
 // هذا المسار يتطلب أن يكون المستخدم مسجلاً دخوله
 Route::middleware('auth:sanctum')->post('/logout', [AuthController::class, 'logout']);
 
@@ -37,6 +44,19 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::middleware('role:freelancer')->group(function () {
         Route::post('/projects/{project}/offers', [OfferController::class, 'store']);
         Route::get('/freelancer/offers', [OfferController::class, 'myOffers']);
+        
+        // ملف تعريف المستقل
+        Route::get('/freelancer/profile', [FreelancerProfileController::class, 'show']);
+        Route::put('/freelancer/profile', [FreelancerProfileController::class, 'update']);
+        
+        // معرض أعمال المستقل (Portfolio)
+        Route::get('/freelancer/portfolio', [FreelancerPortfolioController::class, 'index']);
+        Route::post('/freelancer/portfolio', [FreelancerPortfolioController::class, 'store']);
+        Route::put('/freelancer/portfolio/{freelancerPortfolio}', [FreelancerPortfolioController::class, 'update']);
+        Route::delete('/freelancer/portfolio/{freelancerPortfolio}', [FreelancerPortfolioController::class, 'destroy']);
+        
+        // المشاريع المكتملة للمستقل
+        Route::get('/freelancer/completed-projects', [ProjectController::class, 'completedProjects']);
     });
 
     // عمليات العميل على المشروع

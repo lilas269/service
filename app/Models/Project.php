@@ -66,4 +66,13 @@ class Project extends Model
     {
         return $this->hasMany(Message::class);
     }
+    
+    /**
+     * علاقة المشروع بالتقييمات المقدمة عليه.
+     * للاستدعاء: $project->reviews
+     */
+    public function reviews()
+    {
+        return $this->hasMany(Review::class);
+    }
 }

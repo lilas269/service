@@ -14,7 +14,7 @@ class ReviewController extends Controller
     /**
      * إنشاء تقييم لمشروع مكتمل من قِبل العميل.
      */
-    public function store(Project $project, Request $request)
+    public function createReview(Project $project, Request $request)
     {
         $user = $request->user();
 
@@ -51,9 +51,13 @@ class ReviewController extends Controller
             'comment' => $request->comment,
         ]);
 
+        // تحديث متوسط تقييم المستقل وعدد التقييمات
         $this->updateFreelancerStats($freelancerId);
 
-        return response()->json(['message' => 'Review submitted', 'review' => $review], 201);
+        return response()->json([
+            'message' => 'Review created successfully',
+            'review' => $review->load(['client', 'freelancer']),
+        ], 201);
     }
 
     /**

@@ -61,10 +61,24 @@ Route::middleware('auth:sanctum')->group(function () {
 
     // عمليات العميل على المشروع
     Route::middleware('role:client')->group(function () {
-        Route::post('/projects/{project}/offers/{offer}/accept', [ProjectController::class, 'acceptOffer']);
-        Route::post('/projects/{project}/complete', [ProjectController::class, 'complete']);
+        // إدارة المشاريع
+        Route::post('/projects', [ProjectController::class, 'store']);
+        Route::put('/projects/{project}', [ProjectController::class, 'update']);
+        Route::delete('/projects/{project}', [ProjectController::class, 'destroy']);
+        Route::get('/client/projects', [ProjectController::class, 'myProjects']);
+        
+        // إدارة العروض
+        Route::get('/projects/{project}/offers', [OfferController::class, 'projectOffers']);
+        Route::post('/projects/{project}/offers/{offer}/accept', [OfferController::class, 'acceptOffer']);
+        
+        // إدارة إنهاء المشروع والدفع
+        Route::post('/projects/{project}/complete', [ProjectController::class, 'completeProject']);
+        
+        // إدارة التقييمات
+        Route::post('/projects/{project}/reviews', [ReviewController::class, 'createReview']);
+        
+        // إدارة المشاريع
         Route::post('/projects/{project}/cancel', [ProjectController::class, 'cancel']);
-        Route::post('/projects/{project}/reviews', [ReviewController::class, 'store']);
     });
 
     // المحادثة بين العميل والمستقل بعد قبول العرض
